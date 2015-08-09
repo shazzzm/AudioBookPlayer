@@ -1,0 +1,85 @@
+package tristan.audiobookplayer;
+
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Environment;
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+
+import java.io.File;
+
+
+public class MainActivity extends ActionBarActivity {
+
+    MediaPlayer mp;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        String filename = "/storage/sdcard1/Music" + "/between-the-devil-and-the-deep-blue-sea2.mp3";
+        Log.d("AudioBookPlayer", filename);
+        setContentView(R.layout.activity_main);
+        if (isExternalStorageWritable()) {
+            File file = new File(filename);
+            if (file.exists()) {
+                //Do action
+
+                mp = MediaPlayer.create(this, Uri.parse(filename));
+            }
+            else
+            {
+                Log.d("AudioBookPlayer", "File does not exist");
+            }
+        }
+        else {
+            Log.d("AudioBookPlayer", "External Storage Unavailable");
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    /* Checks if external storage is available for read and write */
+    private boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void onPlayButtonClick(View view)
+    {
+        mp.start();
+    }
+
+    public void onStopButtonClick(View view)
+    {
+        mp.pause();
+    }
+
+}
