@@ -1,5 +1,9 @@
+package tristan.audiobookplayer;
+
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -27,12 +31,31 @@ public class MusicPositionDB extends SQLiteOpenHelper {
 
     }
 
+    public String getTrackPosition(String filename)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] args = {filename};
+        Cursor c = db.query(TABLE_NAME, null, "FILENAME = ?", args, null, null, null);
+        if (c.getCount() > 0) {
+            return c.getString(0);
+        }
+        else {
+            return "";
+        }
+    }
+
     public void writeTrackPosition(String filename, String position)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("FILEBANE", filename);
+        values.put("FILENAME", DatabaseUtils.sqlEscapeString(filename));
         values.put("POSITION", position);
-        db.insert(TABLE_NAME, null, values);
-    }
+        // Check if the track is already in the db
+        if (getTrackPosition(filename) == "") {
+            db.insert(TABLE_NAME, null, values);
+        } else {
+            String[] args = {filename};
+            db.update(TABLE_NAME, values, "filename = ?", args);
+        }
+     }
 }
