@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by tristan on 09/08/15.
@@ -40,7 +41,8 @@ public class MusicPositionDB extends SQLiteOpenHelper {
             return c.getString(0);
         }
         else {
-            return "";
+            Log.d("MusicPositionDB", "Filename " + filename + " not found");
+            return "0";
         }
     }
 
@@ -51,11 +53,13 @@ public class MusicPositionDB extends SQLiteOpenHelper {
         values.put("FILENAME", DatabaseUtils.sqlEscapeString(filename));
         values.put("POSITION", position);
         // Check if the track is already in the db
-        if (getTrackPosition(filename) == "") {
+        if (getTrackPosition(filename) == "0") {
             db.insert(TABLE_NAME, null, values);
+            Log.d("MusicPositionDB", "Inserted filename into db");
         } else {
             String[] args = {filename};
             db.update(TABLE_NAME, values, "filename = ?", args);
+            Log.d("MusicPositionDB", "Updated filename");
         }
      }
 }

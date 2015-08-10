@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.File;
 
@@ -16,19 +17,29 @@ import java.io.File;
 public class MainActivity extends ActionBarActivity {
 
     MediaPlayer mp;
+    MusicPositionDB mpdb;
+    String currentFilename;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mpdb = new MusicPositionDB(this);
         String filename = "/storage/sdcard1/Music" + "/between-the-devil-and-the-deep-blue-sea2.mp3";
+        currentFilename = filename;
         Log.d("AudioBookPlayer", filename);
         setContentView(R.layout.activity_main);
+        String pos = mpdb.getTrackPosition(filename);
+
+        mpdb.writeTrackPosition(filename, pos);
+        TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
+        textView.setText(pos);
         if (isExternalStorageWritable()) {
             File file = new File(filename);
             if (file.exists()) {
                 //Do action
 
                 mp = MediaPlayer.create(this, Uri.parse(filename));
+                mp.seekTo(Integer.parseInt(pos));
             }
             else
             {
@@ -79,7 +90,10 @@ public class MainActivity extends ActionBarActivity {
 
     public void onStopButtonClick(View view)
     {
+        String pos = String.valueOf(mp.getCurrentPosition());
+        TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
+        textView.setText(pos);
         mp.pause();
+        mpdb.writeTrackPosition(currentFilename, pos);
     }
-
 }
