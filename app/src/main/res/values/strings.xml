@@ -8,5 +8,5 @@
     <string name="stop_button_text">Stop</string>
     <string name="clear_button_text">Clear</string>
     <string name="title_activity_file_selector">FileSelector</string>
-
+    <string name="open_file_button_text">Open File</string>
 </resources>

@@ -1,5 +1,6 @@
 package tristan.audiobookplayer;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
@@ -105,5 +106,9 @@ public class MainActivity extends ActionBarActivity {
         mpdb.writeTrackPosition(currentFilename, mp.getCurrentPosition());
     }
 
-    private File[]
+    public void onOpenButtonClick(View view)
+    {
+        Intent intent = new Intent(this, FileSelector.class);
+        startActivity(intent);
+    }
 }
