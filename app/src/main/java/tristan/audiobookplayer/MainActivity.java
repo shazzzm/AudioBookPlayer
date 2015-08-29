@@ -28,18 +28,26 @@ public class MainActivity extends ActionBarActivity {
         currentFilename = filename;
         Log.d("AudioBookPlayer", filename);
         setContentView(R.layout.activity_main);
-        String pos = mpdb.getTrackPosition(filename);
-
-        mpdb.writeTrackPosition(filename, pos);
+        int pos = mpdb.getTrackPosition(filename);
         TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
-        textView.setText(pos);
+        textView.setText(String.valueOf(pos));
+        File[] x = getExternalFilesDirs(Environment.DIRECTORY_MUSIC);
+
+        for (int i = 0; i < x.length; i++)
+        {
+            Log.d("AudioBookPlayer", "Getting music dirs");
+            Log.d("AudioBookPlayer", x[i].getAbsolutePath());
+        }
+
         if (isExternalStorageWritable()) {
             File file = new File(filename);
             if (file.exists()) {
                 //Do action
 
                 mp = MediaPlayer.create(this, Uri.parse(filename));
-                mp.seekTo(Integer.parseInt(pos));
+                if (pos != -1) {
+                    mp.seekTo(pos);
+                }
             }
             else
             {
@@ -94,6 +102,8 @@ public class MainActivity extends ActionBarActivity {
         TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
         textView.setText(pos);
         mp.pause();
-        mpdb.writeTrackPosition(currentFilename, pos);
+        mpdb.writeTrackPosition(currentFilename, mp.getCurrentPosition());
     }
+
+    private File[]
 }

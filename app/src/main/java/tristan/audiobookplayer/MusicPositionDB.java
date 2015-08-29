@@ -2,6 +2,7 @@ package tristan.audiobookplayer;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.CharArrayBuffer;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,7 +17,7 @@ public class MusicPositionDB extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2;
     private static final String TABLE_NAME = "AudioBookPositions";
     private static final String TABLE_CREATE =
-            "CREATE TABLE " + TABLE_NAME + " (FILENAME TEXT, POSITION TEXT);";
+            "CREATE TABLE " + TABLE_NAME + " (FILENAME_HASH INTEGER, POSITION INTEGER);";
 
     MusicPositionDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -32,34 +33,46 @@ public class MusicPositionDB extends SQLiteOpenHelper {
 
     }
 
-    public String getTrackPosition(String filename)
+    public int getTrackPosition(String filename)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] args = {filename};
-        Cursor c = db.query(TABLE_NAME, null, "FILENAME = ?", args, null, null, null);
+        String[] args = {String.valueOf(filename.hashCode())};
+        Cursor c = db.query(TABLE_NAME, null, "FILENAME_HASH = ?", args, null, null, null);
+        c.moveToFirst();
         if (c.getCount() > 0) {
-            return c.getString(0);
+            CharArrayBuffer s = new CharArrayBuffer(100);
+            c.copyStringToBuffer(0, s);
+            Log.d("MusicPositionDB", s.toString());
+            c.copyStringToBuffer(1, s);
+            Log.d("MusicPositionDB", s.toString());
+            return c.getInt(1);
         }
         else {
             Log.d("MusicPositionDB", "Filename " + filename + " not found");
-            return "0";
+            return -1;
         }
     }
 
-    public void writeTrackPosition(String filename, String position)
+    public void writeTrackPosition(String filename, int position)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("FILENAME", DatabaseUtils.sqlEscapeString(filename));
+        values.put("FILENAME_HASH", filename.hashCode());
         values.put("POSITION", position);
         // Check if the track is already in the db
-        if (getTrackPosition(filename) == "0") {
+        if (getTrackPosition(filename) == -1) {
             db.insert(TABLE_NAME, null, values);
             Log.d("MusicPositionDB", "Inserted filename into db");
         } else {
-            String[] args = {filename};
-            db.update(TABLE_NAME, values, "filename = ?", args);
-            Log.d("MusicPositionDB", "Updated filename");
+            String[] args = {String.valueOf(filename.hashCode())};
+            db.update(TABLE_NAME, values, "filename_hash = ?", args);
+            Log.d("MusicPositionDB", "Updated filename " + filename);
         }
      }
+
+    public void clearDatabase()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_NAME);
+    }
 }
