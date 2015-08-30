@@ -23,7 +23,7 @@ public class FileSelector extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_selector);
-
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
         ListView listView = (ListView)findViewById(R.id.fileListView);
         mAdapter = new ArrayAdapter<String>(this, R.layout.simple_list_item_1);
         File storage_folder = new File("/storage");
@@ -44,6 +44,8 @@ public class FileSelector extends ActionBarActivity {
                                             }
                                         }
         );
+
+
     }
 
 
