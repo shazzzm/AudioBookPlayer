@@ -1,5 +1,6 @@
 package tristan.audiobookplayer;
 
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ public class FileSelector extends ActionBarActivity {
 
     File[] foldersInListView;
     ArrayAdapter<String> mAdapter;
+    public static final String FILENAME_INTENT = "filename";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,11 +38,24 @@ public class FileSelector extends ActionBarActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                Log.d("AudioBookFileSelector", "Running OnclickListener");
                                                 // Open the selected folder
-                                                File[] newfiles = foldersInListView[position].listFiles();
-                                                foldersInListView = newfiles;
-                                                mAdapter.clear();
-                                                mAdapter.addAll(getFilenames(newfiles));
+                                                if (foldersInListView[position].isDirectory()) {
+                                                    File[] newfiles = foldersInListView[position].listFiles();
+                                                    foldersInListView = newfiles;
+                                                    mAdapter.clear();
+                                                    mAdapter.addAll(getFilenames(newfiles));
+                                                }
+                                                else if (isMediaFile(foldersInListView[position].getName()))
+                                                {
+                                                    Bundle extras = new Bundle();
+                                                    extras.putString(FILENAME_INTENT, foldersInListView[position].getAbsolutePath());
+                                                    Log.d("AudioBookFileSelector", "Sending intent");
+                                                    Log.d("AudioBookFileSelector", foldersInListView[position].getAbsolutePath());
+                                                    Intent intent = new Intent(view.getContext(), MainActivity.class);
+                                                    intent.putExtras(extras);
+                                                    view.getContext().startActivity(intent);
+                                                }
                                             }
                                         }
         );
@@ -81,6 +96,19 @@ public class FileSelector extends ActionBarActivity {
         return strings;
     }
 
+    private boolean isMediaFile(String filename) {
+        final String[] extensions = {"mp3"};
+        String[] filenameArray = filename.split("\\.");
+        String extension = filenameArray[filenameArray.length - 1];
+        for (int i = 0; i < extensions.length; i++)
+        {
+            if (extensions[i].equals(extension))
+            {
+                return true;
+            }
+        }
 
+        return false;
+    }
 
 }

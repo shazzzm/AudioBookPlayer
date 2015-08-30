@@ -21,13 +21,30 @@ public class MainActivity extends ActionBarActivity {
     MusicPositionDB mpdb;
     String currentFilename;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mpdb = new MusicPositionDB(this);
-        String filename = "/storage/sdcard1/Music" + "/between-the-devil-and-the-deep-blue-sea2.mp3";
+        String filename = "";
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            filename = extras.getString(FileSelector.FILENAME_INTENT);
+        }
+
+
+        if (filename == null || filename.equals(""))
+        {
+            filename = "/storage/sdcard1/Music" + "/between-the-devil-and-the-deep-blue-sea2.mp3";
+            Log.d("AudioBookPlayer", "No Intent filename found");
+        }
+        else
+        {
+            Log.d("AudioBookPlayer", filename);
+        }
+
         currentFilename = filename;
-        Log.d("AudioBookPlayer", filename);
         setContentView(R.layout.activity_main);
         int pos = mpdb.getTrackPosition(filename);
         TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
