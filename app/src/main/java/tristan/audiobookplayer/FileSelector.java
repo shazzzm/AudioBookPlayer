@@ -4,6 +4,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 
 public class FileSelector extends ActionBarActivity {
@@ -12,6 +15,11 @@ public class FileSelector extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_selector);
+
+        ListView listView = (ListView)findViewById(R.id.fileListView);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.simple_list_item_1);
+
+        listView.setAdapter(adapter);
     }
 
 
