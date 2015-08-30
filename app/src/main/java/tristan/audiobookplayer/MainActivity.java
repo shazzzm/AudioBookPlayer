@@ -32,13 +32,6 @@ public class MainActivity extends ActionBarActivity {
         int pos = mpdb.getTrackPosition(filename);
         TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
         textView.setText(String.valueOf(pos));
-        File[] x = getExternalFilesDirs(Environment.DIRECTORY_MUSIC);
-
-        for (int i = 0; i < x.length; i++)
-        {
-            Log.d("AudioBookPlayer", "Getting music dirs");
-            Log.d("AudioBookPlayer", x[i].getAbsolutePath());
-        }
 
         if (isExternalStorageWritable()) {
             File file = new File(filename);
