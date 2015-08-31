@@ -118,6 +118,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void onOpenButtonClick(View view)
     {
+        mp.release();
         Intent intent = new Intent(this, FileSelector.class);
         startActivity(intent);
     }

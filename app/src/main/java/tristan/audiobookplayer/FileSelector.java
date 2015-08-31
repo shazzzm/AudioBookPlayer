@@ -21,6 +21,9 @@ public class FileSelector extends ActionBarActivity {
     File[] foldersInListView;
     ArrayAdapter<String> mAdapter;
     public static final String FILENAME_INTENT = "filename";
+    private final String SELECTOR_START = "/storage";
+
+    private File currentLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +31,9 @@ public class FileSelector extends ActionBarActivity {
         //getActionBar().setDisplayHomeAsUpEnabled(true);
         ListView listView = (ListView)findViewById(R.id.fileListView);
         mAdapter = new ArrayAdapter<String>(this, R.layout.simple_list_item_1);
-        File storage_folder = new File("/storage");
+        File storage_folder = new File(SELECTOR_START);
+        currentLocation = storage_folder;
+
         File[] storage_folders = storage_folder.listFiles();
         foldersInListView = storage_folders;
         String[] dirs = getFilenames(storage_folders);
@@ -41,6 +46,7 @@ public class FileSelector extends ActionBarActivity {
                                                 Log.d("AudioBookFileSelector", "Running OnclickListener");
                                                 // Open the selected folder
                                                 if (foldersInListView[position].isDirectory()) {
+                                                    foldersInListView[position].getAbsolutePath();
                                                     File[] newfiles = foldersInListView[position].listFiles();
                                                     foldersInListView = newfiles;
                                                     mAdapter.clear();
@@ -84,6 +90,14 @@ public class FileSelector extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onUpButtonClick(View view)
+    {
+        File[] newfiles = currentLocation.listFiles();
+        foldersInListView = newfiles;
+        mAdapter.clear();
+        mAdapter.addAll(getFilenames(newfiles));
     }
 
     private String[] getFilenames(File[] files)
