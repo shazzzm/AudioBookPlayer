@@ -1,6 +1,7 @@
 package tristan.audiobookplayer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
@@ -21,6 +22,8 @@ public class MainActivity extends ActionBarActivity {
     MusicPositionDB mpdb;
     String currentFilename;
 
+    final static String LAST_FILE = "last_file";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,8 @@ public class MainActivity extends ActionBarActivity {
         String filename = "";
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+        SharedPreferences settings = getPreferences(MODE_PRIVATE);
+
         if (extras != null) {
             filename = extras.getString(FileSelector.FILENAME_INTENT);
         }
@@ -36,11 +41,14 @@ public class MainActivity extends ActionBarActivity {
 
         if (filename == null || filename.equals(""))
         {
-            filename = "/storage/sdcard1/Music" + "/between-the-devil-and-the-deep-blue-sea2.mp3";
+            filename = settings.getString(LAST_FILE,  "/storage/sdcard1/Music" + "/between-the-devil-and-the-deep-blue-sea2.mp3");
             Log.d("AudioBookPlayer", "No Intent filename found");
         }
         else
         {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(LAST_FILE, filename);
+            editor.commit();
             Log.d("AudioBookPlayer", filename);
         }
 
@@ -121,7 +129,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void onClearButtonClick(View view) {
-        // TODO: Put stuff in this
+        mpdb.clearDatabase();
     }
 
     public void onResetButtonClick(View view) {
