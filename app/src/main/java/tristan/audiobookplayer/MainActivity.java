@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         int pos = mpdb.getTrackPosition(filename);
         TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
-        textView.setText(String.valueOf(pos));
+        textView.setText(filename);
 
         if (isExternalStorageWritable()) {
             File file = new File(filename);
@@ -109,9 +109,6 @@ public class MainActivity extends ActionBarActivity {
 
     public void onStopButtonClick(View view)
     {
-        String pos = String.valueOf(mp.getCurrentPosition());
-        TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
-        textView.setText(pos);
         mp.pause();
         mpdb.writeTrackPosition(currentFilename, mp.getCurrentPosition());
     }
@@ -121,5 +118,15 @@ public class MainActivity extends ActionBarActivity {
         mp.release();
         Intent intent = new Intent(this, FileSelector.class);
         startActivity(intent);
+    }
+
+    public void onClearButtonClick(View view) {
+        // TODO: Put stuff in this
+    }
+
+    public void onResetButtonClick(View view) {
+        mp.pause();
+        mp.seekTo(0);
+        mpdb.writeTrackPosition(currentFilename, 0);
     }
 }

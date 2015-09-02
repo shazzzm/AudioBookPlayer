@@ -5,42 +5,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/play_button_text"
-        android:id="@+id/play_button"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:onClick="onPlayButtonClick"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/stop_button_text"
-        android:id="@+id/stop_button"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="onStopButtonClick"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/nowPlayingTextBox"
-        android:layout_below="@+id/play_button"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="70dp"
         />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView"
-        android:layout_below="@+id/nowPlayingTextBox"
-        android:layout_alignStart="@+id/nowPlayingTextBox"
-        android:layout_marginTop="38dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -50,7 +22,7 @@
         android:id="@+id/clear_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:onClick="onPlayButtonClick"/>
+        android:onClick="onClearButtonClick"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -60,4 +32,39 @@
         android:layout_alignBottom="@+id/clear_button"
         android:layout_alignParentEnd="true"
         android:onClick="onOpenButtonClick"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/playButton"
+        android:src="@drawable/ic_play_arrow_black_24dp"
+        android:onClick="onPlayButtonClick"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/imageView" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/stopButton"
+        android:src="@drawable/ic_stop_black_24dp"
+        android:onClick="onStopButtonClick"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/resetButton"
+        android:src="@drawable/ic_replay_black_24dp"
+        android:onClick="onResetButtonClick"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/imageView" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_below="@+id/nowPlayingTextBox"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_library_music_black_48dp"/>
 </RelativeLayout>
