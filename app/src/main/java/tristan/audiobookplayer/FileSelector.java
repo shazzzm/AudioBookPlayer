@@ -22,6 +22,7 @@ public class FileSelector extends ActionBarActivity {
     ArrayAdapter<String> mAdapter;
     public static final String FILENAME_INTENT = "filename";
     private final String SELECTOR_START = "/storage";
+    final String[] extensions = {"mp3", "m4b", "m4a"};
 
     private File currentLocation;
     @Override
@@ -111,7 +112,6 @@ public class FileSelector extends ActionBarActivity {
     }
 
     private boolean isMediaFile(String filename) {
-        final String[] extensions = {"mp3"};
         String[] filenameArray = filename.split("\\.");
         String extension = filenameArray[filenameArray.length - 1];
         for (int i = 0; i < extensions.length; i++)
