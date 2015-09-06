@@ -5,12 +5,14 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -21,8 +23,22 @@ public class MainActivity extends ActionBarActivity {
     MediaPlayer mp;
     MusicPositionDB mpdb;
     String currentFilename;
+    Handler seekBarHandler = new Handler();
 
+    // Key for the last file being played from the config file
     final static String LAST_FILE = "last_file";
+
+    // Interval which we run a task to update the seek bar at
+    final static int SEEK_INTERVAL = 1000;
+
+    Runnable seekBarRunnable = new Runnable() {
+        @Override
+        public void run() {
+            SeekBar seekBar = (SeekBar)findViewById(R.id.seekBar);
+            seekBar.setProgress(getProgress());
+            seekBarHandler.postDelayed(seekBarRunnable, SEEK_INTERVAL);
+        }
+    };
 
 
     @Override
@@ -110,20 +126,35 @@ public class MainActivity extends ActionBarActivity {
         return false;
     }
 
-    public void onPlayButtonClick(View view)
+    private int getProgress()
     {
-        mp.start();
+        float progressValue = (float)mp.getCurrentPosition()/(float)mp.getDuration();
+        return (int)(progressValue*100);
     }
 
-    public void onStopButtonClick(View view)
-    {
+    private void startSeekUpdater() {
+        seekBarRunnable.run();
+    }
+
+    private void stopSeekUpdater() {
+        seekBarHandler.removeCallbacks(seekBarRunnable);
+    }
+
+
+    public void onPlayButtonClick(View view) {
+        mp.start();
+        startSeekUpdater();
+    }
+
+    public void onStopButtonClick(View view) {
         mp.pause();
         mpdb.writeTrackPosition(currentFilename, mp.getCurrentPosition());
+        stopSeekUpdater();
     }
 
-    public void onOpenButtonClick(View view)
-    {
+    public void onOpenButtonClick(View view) {
         mp.release();
+        stopSeekUpdater();
         Intent intent = new Intent(this, FileSelector.class);
         startActivity(intent);
     }
