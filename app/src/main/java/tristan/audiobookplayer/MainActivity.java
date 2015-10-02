@@ -107,6 +107,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Set up the seekbar
         SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setProgress(getProgress());
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
@@ -123,7 +124,6 @@ public class MainActivity extends ActionBarActivity {
         });
 
         updateHandler = new Handler();
-        updateRunnable.run();
     }
 
 
@@ -188,12 +188,14 @@ public class MainActivity extends ActionBarActivity {
             mpdb.writeTrackPosition(currentFilename, mp.getCurrentPosition());
             stopSeekUpdater();
             button.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+            updateHandler.removeCallbacks(updateRunnable);
 
         }
         else {
             mp.start();
             startSeekUpdater();
             button.setImageResource(R.drawable.ic_stop_black_24dp);
+            updateRunnable.run();
         }
         currentlyPlaying = !currentlyPlaying;
     }
