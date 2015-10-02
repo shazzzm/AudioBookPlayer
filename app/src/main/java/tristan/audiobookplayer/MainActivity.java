@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ public class MainActivity extends ActionBarActivity {
     MediaPlayer mp;
     MusicPositionDB mpdb;
     String currentFilename;
+    boolean currentlyPlaying = false;
 
     // Updates the seek bar
     Handler seekBarHandler = new Handler();
@@ -179,14 +181,21 @@ public class MainActivity extends ActionBarActivity {
 
 
     public void onPlayButtonClick(View view) {
-        mp.start();
-        startSeekUpdater();
-    }
+        ImageButton button = (ImageButton)findViewById(R.id.playButton);
 
-    public void onStopButtonClick(View view) {
-        mp.pause();
-        mpdb.writeTrackPosition(currentFilename, mp.getCurrentPosition());
-        stopSeekUpdater();
+        if (currentlyPlaying) {
+            mp.pause();
+            mpdb.writeTrackPosition(currentFilename, mp.getCurrentPosition());
+            stopSeekUpdater();
+            button.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+
+        }
+        else {
+            mp.start();
+            startSeekUpdater();
+            button.setImageResource(R.drawable.ic_stop_black_24dp);
+        }
+        currentlyPlaying = !currentlyPlaying;
     }
 
     public void onOpenButtonClick(View view) {
