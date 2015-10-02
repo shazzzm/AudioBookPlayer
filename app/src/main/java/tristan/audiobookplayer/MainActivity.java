@@ -23,7 +23,12 @@ public class MainActivity extends ActionBarActivity {
     MediaPlayer mp;
     MusicPositionDB mpdb;
     String currentFilename;
+
+    // Updates the seek bar
     Handler seekBarHandler = new Handler();
+
+    // Saves the current time in the db so it isn't lost if something bad happens
+    Handler updateHandler;
 
     // Key for the last file being played from the config file
     final static String LAST_FILE = "last_file";
@@ -31,12 +36,23 @@ public class MainActivity extends ActionBarActivity {
     // Interval which we run a task to update the seek bar at
     final static int SEEK_INTERVAL = 1000;
 
+    // Interval to update the db to where we are in the file
+    final static int UPDATE_INTERVAL = 5000;
+
     Runnable seekBarRunnable = new Runnable() {
         @Override
         public void run() {
             SeekBar seekBar = (SeekBar)findViewById(R.id.seekBar);
             seekBar.setProgress(getProgress());
             seekBarHandler.postDelayed(seekBarRunnable, SEEK_INTERVAL);
+        }
+    };
+
+    Runnable updateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mpdb.writeTrackPosition(currentFilename, mp.getCurrentPosition());
+            updateHandler.postDelayed(updateRunnable, UPDATE_INTERVAL);
         }
     };
 
@@ -55,13 +71,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
 
-        if (filename == null || filename.equals(""))
-        {
-            filename = settings.getString(LAST_FILE,  "/storage/sdcard1/Music" + "/between-the-devil-and-the-deep-blue-sea2.mp3");
+        if (filename == null || filename.equals("")) {
+            filename = settings.getString(LAST_FILE, "/storage/sdcard1/Music" + "/between-the-devil-and-the-deep-blue-sea2.mp3");
             Log.d("AudioBookPlayer", "No Intent filename found");
-        }
-        else
-        {
+        } else {
             SharedPreferences.Editor editor = settings.edit();
             editor.putString(LAST_FILE, filename);
             editor.commit();
@@ -83,15 +96,32 @@ public class MainActivity extends ActionBarActivity {
                 if (pos != -1) {
                     mp.seekTo(pos);
                 }
-            }
-            else
-            {
+            } else {
                 Log.d("AudioBookPlayer", "File does not exist");
             }
-        }
-        else {
+        } else {
             Log.d("AudioBookPlayer", "External Storage Unavailable");
         }
+
+        // Set up the seekbar
+        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int seekTo = getSeek(seekBar.getProgress());
+                mp.seekTo(seekTo);
+            }
+        });
+
+        updateHandler = new Handler();
+        updateRunnable.run();
     }
 
 
@@ -132,6 +162,13 @@ public class MainActivity extends ActionBarActivity {
         return (int)(progressValue*100);
     }
 
+    private int getSeek(int progress)
+    {
+        float progressValue = (float)progress/100;
+        return (int)((float)mp.getDuration()*progressValue);
+    }
+
+
     private void startSeekUpdater() {
         seekBarRunnable.run();
     }
@@ -168,4 +205,5 @@ public class MainActivity extends ActionBarActivity {
         mp.seekTo(0);
         mpdb.writeTrackPosition(currentFilename, 0);
     }
+
 }
