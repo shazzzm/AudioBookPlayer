@@ -1,5 +1,8 @@
 package tristan.audiobookplayer;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -113,14 +116,19 @@ public class MainActivity extends ActionBarActivity {
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
+                // If we're playing music, seek to the selected spot
+                // else don't seek
                 if (mp != null) {
                     int seekTo = getSeek(seekBar.getProgress());
                     mp.seekTo(seekTo);
+                } else {
+                    seekBar.setProgress(0);
                 }
             }
         });
 
         updateHandler = new Handler();
+        setNotification();
     }
 
 
@@ -225,6 +233,26 @@ public class MainActivity extends ActionBarActivity {
         mp.pause();
         mp.seekTo(0);
         mpdb.writeTrackPosition(currentFilename, 0);
+    }
+
+    private void setNotification() {
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        PendingIntent pausePendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new Notification.Builder(this)
+                // Show controls on lock screen even when user hides sensitive content.
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setSmallIcon(R.drawable.ic_library_music_black_24dp)
+                        // Add media control buttons that invoke intents in your media service
+                .addAction(R.drawable.ic_stop_black_24dp, "Stop", pausePendingIntent)  // #1
+                .build();
+
+        // Sets an ID for the notification
+        int mNotificationId = 001;
+// Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+// Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, notification);
     }
 
 }
