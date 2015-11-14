@@ -62,6 +62,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         mpdb = new MusicPositionDB(this);
         String filename = "";
         Intent intent = getIntent();
@@ -83,26 +84,20 @@ public class MainActivity extends ActionBarActivity {
             Log.d("AudioBookPlayer", filename);
         }
 
-        currentFilename = filename;
-        setContentView(R.layout.activity_main);
-        int pos = mpdb.getTrackPosition(filename);
-        TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
-        textView.setText(filename);
-
-        if (isExternalStorageWritable()) {
-            File file = new File(filename);
-            if (file.exists()) {
-                //Do action
-
-                mp = MediaPlayer.create(this, Uri.parse(filename));
-                if (pos != -1) {
-                    mp.seekTo(pos);
-                }
-            } else {
-                Log.d("AudioBookPlayer", "File does not exist");
+        File file = new File(filename);
+        if (file.exists()) {
+            currentFilename = filename;
+            setContentView(R.layout.activity_main);
+            int pos = mpdb.getTrackPosition(filename);
+            TextView textView = (TextView) findViewById(R.id.nowPlayingTextBox);
+            textView.setText(filename);
+            mp = MediaPlayer.create(this, Uri.parse(filename));
+            if (pos != -1) {
+                mp.seekTo(pos);
             }
         } else {
-            Log.d("AudioBookPlayer", "External Storage Unavailable");
+            // Disable the play and stop buttons
+            SetMusicButtonsState(false);
         }
 
         // Set up the seekbar
@@ -118,8 +113,10 @@ public class MainActivity extends ActionBarActivity {
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
-                int seekTo = getSeek(seekBar.getProgress());
-                mp.seekTo(seekTo);
+                if (mp != null) {
+                    int seekTo = getSeek(seekBar.getProgress());
+                    mp.seekTo(seekTo);
+                }
             }
         });
 
@@ -160,8 +157,12 @@ public class MainActivity extends ActionBarActivity {
 
     private int getProgress()
     {
-        float progressValue = (float)mp.getCurrentPosition()/(float)mp.getDuration();
-        return (int)(progressValue*100);
+        if (mp != null) {
+            float progressValue = (float) mp.getCurrentPosition() / (float) mp.getDuration();
+            return (int) (progressValue * 100);
+        } else {
+            return 0;
+        }
     }
 
     private int getSeek(int progress)
@@ -177,6 +178,13 @@ public class MainActivity extends ActionBarActivity {
 
     private void stopSeekUpdater() {
         seekBarHandler.removeCallbacks(seekBarRunnable);
+    }
+
+    private void SetMusicButtonsState(boolean enable) {
+        ImageButton playButton = (ImageButton) findViewById(R.id.playButton);
+        ImageButton resetButton = (ImageButton) findViewById(R.id.resetButton);
+        playButton.setEnabled(enable);
+        resetButton.setEnabled(enable);
     }
 
 
@@ -201,8 +209,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void onOpenButtonClick(View view) {
-        mp.release();
-        stopSeekUpdater();
+        if (mp != null) {
+            mp.release();
+            stopSeekUpdater();
+        }
         Intent intent = new Intent(this, FileSelector.class);
         startActivity(intent);
     }
