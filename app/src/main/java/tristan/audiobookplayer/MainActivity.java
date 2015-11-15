@@ -235,24 +235,37 @@ public class MainActivity extends ActionBarActivity {
         mpdb.writeTrackPosition(currentFilename, 0);
     }
 
+    private void handleIntent( Intent intent ) {
+        if (intent == null || intent.getAction() == null)
+            return;
+    }
+
+    private Notification.Action generateAction( int icon, String title) {
+        Intent intent = new Intent( getApplicationContext(), MainActivity.class );
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, 0);
+        return new Notification.Action.Builder( icon, title, pendingIntent ).build();
+    }
+
     private void setNotification() {
+        Notification.MediaStyle style = new Notification.MediaStyle();
         Intent resultIntent = new Intent(this, MainActivity.class);
         PendingIntent pausePendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification notification = new Notification.Builder(this)
+        Notification.Builder notification = new Notification.Builder(this)
                 // Show controls on lock screen even when user hides sensitive content.
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_library_music_black_24dp)
                         // Add media control buttons that invoke intents in your media service
-                .addAction(R.drawable.ic_stop_black_24dp, "Stop", pausePendingIntent)  // #1
-                .build();
+                .addAction(generateAction(R.drawable.ic_play_arrow_black_24dp, "Play")) // #1
+                .setPriority(Notification.PRIORITY_MAX)
+                .setStyle(style);
 
         // Sets an ID for the notification
         int mNotificationId = 001;
-// Gets an instance of the NotificationManager service
+        // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-// Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, notification);
+        // Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, notification.build());
     }
 
 }
