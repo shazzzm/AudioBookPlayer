@@ -240,22 +240,18 @@ public class MainActivity extends ActionBarActivity {
             return;
     }
 
-    private Notification.Action generateAction( int icon, String title) {
-        Intent intent = new Intent( getApplicationContext(), MainActivity.class );
-        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, 0);
-        return new Notification.Action.Builder( icon, title, pendingIntent ).build();
-    }
-
     private void setNotification() {
+        Intent intent = new Intent( getApplicationContext(), NotificationReceiverActivity.class );
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.MediaStyle style = new Notification.MediaStyle();
-        Intent resultIntent = new Intent(this, MainActivity.class);
-        PendingIntent pausePendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Notification.Builder notification = new Notification.Builder(this)
                 // Show controls on lock screen even when user hides sensitive content.
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_library_music_black_24dp)
                         // Add media control buttons that invoke intents in your media service
-                .addAction(generateAction(R.drawable.ic_play_arrow_black_24dp, "Play")) // #1
+                .addAction(R.drawable.ic_play_arrow_black_24dp, "Play", pendingIntent)// #1
                 .setPriority(Notification.PRIORITY_MAX)
                 .setStyle(style);
 
