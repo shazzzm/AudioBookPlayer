@@ -1,4 +1,4 @@
-package tristan.audiobookplayer;
+package tristan.audiobookplayer.Databases;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -21,7 +21,7 @@ public class MusicPositionDB extends SQLiteOpenHelper {
 
     SQLiteDatabase db;
 
-    MusicPositionDB(Context context) {
+    public MusicPositionDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         db = this.getWritableDatabase();
     }

@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import java.io.File;
 
+import tristan.audiobookplayer.Databases.MusicPositionDB;
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -222,6 +224,11 @@ public class MainActivity extends ActionBarActivity {
             stopSeekUpdater();
         }
         Intent intent = new Intent(this, FileSelector.class);
+        startActivity(intent);
+    }
+
+    public void onPlaylistButtonClick(View view) {
+        Intent intent = new Intent(this, PlaylistActivity.class);
         startActivity(intent);
     }
 

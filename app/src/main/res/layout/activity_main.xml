@@ -68,4 +68,13 @@
         android:layout_above="@+id/clear_button"
         android:layout_alignParentStart="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Playlists"
+        android:id="@+id/playlist_button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="onPlaylistButtonClick" />
+
 </RelativeLayout>

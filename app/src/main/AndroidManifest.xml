@@ -22,8 +22,11 @@
         <activity
             android:name=".FileSelector"
             android:label="@string/title_activity_file_selector"
-            android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".NotificationReceiverActivity"></activity>
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".NotificationReceiverActivity" />
+        <activity
+            android:name=".PlaylistActivity"
+            android:label="@string/title_activity_play_list"></activity>
     </application>
 
 </manifest>
