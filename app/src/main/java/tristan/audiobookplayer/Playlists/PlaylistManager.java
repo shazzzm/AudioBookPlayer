@@ -1,4 +1,4 @@
-package tristan.audiobookplayer;
+package tristan.audiobookplayer.Playlists;
 
 /**
  * Created by tristan on 06/05/16.
