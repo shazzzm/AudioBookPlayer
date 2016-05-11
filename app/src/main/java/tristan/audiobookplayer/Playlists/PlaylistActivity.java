@@ -27,10 +27,17 @@ public class PlaylistActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_list);
         playListDB = new PlayListDB(this);
-        String[] playlists = playListDB.getPlaylists();
-        ListView listView = (ListView)findViewById(R.id.fileListView);
+        Playlist[] playlists = playListDB.getPlaylists();
+        ListView listView = (ListView)findViewById(R.id.playlistListView);
         mAdapter = new ArrayAdapter<String>(this, R.layout.simple_list_item_1);
-        mAdapter.addAll(playlists);
+
+        String[] playlistNames = new String[playlists.length];
+
+        for (int i = 0; i < playlists.length; i++) {
+            playlistNames[i] = playlists[i].getName();
+        }
+
+        mAdapter.addAll(playlistNames);
         listView.setAdapter(mAdapter);
     }
 
