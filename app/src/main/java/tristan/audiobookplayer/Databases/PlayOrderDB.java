@@ -11,10 +11,10 @@ import android.util.Log;
  */
 public class PlayOrderDB extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "AudioBook";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String TABLE_NAME = "AudioBookPlayOrder";
     private static final String TABLE_CREATE =
-            "CREATE TABLE " + TABLE_NAME + " (filename STRING, skipped INTEGER, played_at DATETIME DEFAULT CURRENT_TIMESTAMP);";
+            "CREATE TABLE " + TABLE_NAME + " (filename TEXT, skipped INTEGER, played_at DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
     SQLiteDatabase db;
 

@@ -19,11 +19,8 @@ public class MusicPositionDB extends SQLiteOpenHelper {
     private static final String TABLE_CREATE =
             "CREATE TABLE " + TABLE_NAME + " (filename_hash INTEGER, position INTEGER);";
 
-    SQLiteDatabase db;
-
     public MusicPositionDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        db = this.getWritableDatabase();
     }
 
     @Override
@@ -36,6 +33,7 @@ public class MusicPositionDB extends SQLiteOpenHelper {
     }
 
     public int getTrackPosition(String filename) {
+        SQLiteDatabase db = this.getReadableDatabase();
         String[] args = {String.valueOf(filename.hashCode())};
         Cursor c = db.query(TABLE_NAME, null, "filename_hash = ?", args, null, null, null);
         c.moveToFirst();
@@ -55,6 +53,7 @@ public class MusicPositionDB extends SQLiteOpenHelper {
 
     public void writeTrackPosition(String filename, int position)
     {
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("filename_hash", filename.hashCode());
         values.put("position", position);
