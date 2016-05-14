@@ -25,7 +25,7 @@
             android:parentActivityName=".MainActivity" />
         <activity android:name=".NotificationReceiverActivity" />
         <activity
-            android:name=".PlaylistActivity"
+            android:name=".Playlists.PlaylistActivity"
             android:label="@string/title_activity_play_list"></activity>
     </application>
 
