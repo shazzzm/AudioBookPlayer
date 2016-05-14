@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- <?xml version="1.0" encoding="utf-8"?> -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -20,9 +20,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Up"
-        android:id="@+id/button"
+        android:text="Create Playlist"
+        android:id="@+id/create_playlist_button"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:onClick="onUpButtonClick"/>
+        android:onClick="onCreatePlaylistButtonClick"/>
 </RelativeLayout>

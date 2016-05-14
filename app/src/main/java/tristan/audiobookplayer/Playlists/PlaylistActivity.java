@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import tristan.audiobookplayer.Databases.PlayListDB;
@@ -27,29 +30,18 @@ public class PlaylistActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_list);
         playListDB = new PlayListDB(this);
-        Playlist[] playlists = playListDB.getPlaylists();
-        ListView listView = (ListView)findViewById(R.id.playlistListView);
-        mAdapter = new ArrayAdapter<String>(this, R.layout.simple_list_item_1);
-
-        String[] playlistNames = new String[playlists.length];
-
-        for (int i = 0; i < playlists.length; i++) {
-            playlistNames[i] = playlists[i].getName();
-        }
-
-        mAdapter.addAll(playlistNames);
-        listView.setAdapter(mAdapter);
+        setupPlaylists();
     }
 
-    public void onUpButtonClick(Context context) {
+    public void onCreatePlaylistButtonClick(View view) {
         Dialog d = onCreateDialog(null);
         d.show();
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Get the layout inflater
-        LayoutInflater inflater = this.getLayoutInflater();
+        final LayoutInflater inflater = this.getLayoutInflater();
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
@@ -58,7 +50,11 @@ public class PlaylistActivity extends Activity {
                 .setPositiveButton(R.string.playlist_dialog_save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        // sign in the user ...
+                        Dialog f = (Dialog) dialog;
+                        EditText playlistNameField = (EditText)f.findViewById(R.id.playlist_name);
+                        Log.d("AudioBookPlayer", "Set playlist name is: " + playlistNameField.getText().toString());
+                        playListDB.createPlaylist(playlistNameField.getText().toString());
+                        setupPlaylists();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -68,5 +64,21 @@ public class PlaylistActivity extends Activity {
                 });
         return builder.create();
 
+    }
+
+    private void setupPlaylists() {
+        Playlist[] playlists = playListDB.getPlaylists();
+        ListView listView = (ListView)findViewById(R.id.playlistListView);
+        mAdapter = new ArrayAdapter<String>(this, R.layout.simple_list_item_1);
+
+        String[] playlistNames = new String[playlists.length];
+
+        for (int i = 0; i < playlists.length; i++) {
+            playlistNames[i] = playlists[i].getName();
+            Log.d("AudioBookPlayer", "Playlist Name: " + playlistNames[i]);
+        }
+
+        mAdapter.addAll(playlistNames);
+        listView.setAdapter(mAdapter);
     }
 }
